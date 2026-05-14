@@ -247,10 +247,10 @@ void Action_TurnLeft_Spin(CarContext *ctx) {
 
     // 执行原地旋转：左轮停止，右轮前进37，实现左转
     go_forward_a(0); 
-    go_forward_b(37);  
+    go_forward_b(32);  
 
     // 智能退出检测：旋转200个周期后，开始检测M0传感器
-    if(ctx->turn_counter > 200) {
+    if(ctx->turn_counter > 100) {
         if(M0 == 0) {
             ctx->m0_detect_count++;
             if(ctx->m0_detect_count >= 3) {
@@ -280,7 +280,8 @@ void Action_TurnLeft_Stop(CarContext *ctx) {
     ctx->turn_counter++;
 
     // 执行停止刹车
-    go_backward_a(120);
+    go_backward_a((int)ctx->v_base);
+    go_backward_b((int)ctx->v_base);
 
     if(ctx->turn_counter >= 15) {
         // 转弯完成标志置为1
@@ -395,9 +396,9 @@ void sensor_read() {
 // ==========================================
 void car_init() {
     // ---------------- 初始化PID参数 ----------------
-    g_car.Kp = 2.2f;
+    g_car.Kp = 0.5f;
     g_car.Ki = 0.02f;
-    g_car.Kd = 0.35f;
+    g_car.Kd = 0.1f;
     g_car.integral_sep_thresh = 12.0f;
     g_car.diff_filter_alpha = 0.7f;
     g_car.v_base = 41;
